@@ -17,19 +17,20 @@ const numberOfLikes = 1234;
 const caption =
   " Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt, assumenda.";
 
-const ContentCard = () => {
+const ContentCard = (props) => {
   const likePost = (amount) => {
-    alert(`Liked Post! ${amount}`);
+    props.numberOfLikes += 1;
+    alert(`Liked Post! ${props.numberOfLikes}`);
   };
 
   return (
     <Card className="my-3">
       <CardBody>
         <CardTitle tag="h5" className="fw-bold">
-          {username}
+          {props.username}
         </CardTitle>
         <CardSubtitle tag="h6" className="text-muted mb-4">
-          {location}
+          {props.location}
         </CardSubtitle>
         <img
           style={{
@@ -40,11 +41,13 @@ const ContentCard = () => {
           alt="user's content"
         />
         <CardText tag="h6" className="fw-bold mt-3">
-          {numberOfLikes.toLocaleString()} Likes
+          {props.numberOfLikes.toLocaleString()} Likes
         </CardText>
         <CardText>
-          <span className="fw-bold">{username}</span>{" "}
-          {caption.length > 140 ? caption.slice(0, 141) + "..." : caption}
+          <span className="fw-bold">{props.username}</span>{" "}
+          {props.caption.length > 140
+            ? props.caption.slice(0, 141) + "..."
+            : props.caption}
         </CardText>
 
         <Button
