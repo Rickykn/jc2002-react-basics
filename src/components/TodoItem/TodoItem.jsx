@@ -25,11 +25,11 @@ const TodoItem = (props) => {
                 Done
               </Button>
             ) : (
-              <Button onClick={props.edit} color="danger">
+              <Button onClick={props.edit} color="warning">
                 On Going
               </Button>
             )}
-            <Button className="mx-2" color="warning" onClick={props.item}>
+            <Button className="mx-2" color="danger" onClick={props.item}>
               Delete
             </Button>
           </div>

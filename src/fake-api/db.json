@@ -1,0 +1,22 @@
+{
+  "todos": [
+    {
+      "id": 1,
+      "date": "04-03-2022",
+      "action": "Belajar fundamental",
+      "isDone": true
+    },
+    {
+      "id": 2,
+      "date": "03-25-2022",
+      "action": "Belajar frontend",
+      "isDone": true
+    },
+    {
+      "date": "2022-03-04T03:53:31.697Z",
+      "action": "Belajar coding",
+      "isDone": true,
+      "id": 3
+    }
+  ]
+}

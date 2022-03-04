@@ -8,6 +8,7 @@ import ClassComponent from "./ClassComponent/ClassComponent";
 import ContentCard from "./components/ContentCard/ContentCard";
 import TodoItem from "./components/TodoItem/TodoItem";
 import { Button, Input } from "reactstrap";
+import axios from "axios";
 
 const data = [
   {
@@ -30,57 +31,23 @@ const data = [
   },
 ];
 
-const dataTodo = [
-  {
-    date: "2 Mar 2022",
-    content: "Belajar programming",
-    status: "OnGoing",
-  },
-  {
-    date: "2 Mar 2022",
-    content: "Belajar programming",
-    status: "Done",
-  },
-  {
-    date: "2 Mar 2022",
-    content: "Belajar programming",
-    status: "OnGoing",
-  },
-];
-
 function App() {
   const [myUsername, setMyUsername] = useState("seto");
-  const [todoList, setTodoList] = useState([
-    {
-      date: new Date(),
-      content: "Belajar programming",
-      status: false,
-    },
-    {
-      date: new Date(),
-      content: "Belajar programming",
-      status: true,
-    },
-    {
-      date: new Date(),
-      content: "Belajar programming",
-      status: false,
-    },
-  ]);
+  const [todoList, setTodoList] = useState([]);
 
   const [todoInputValue, setTodoInputValue] = useState("");
   const [todoDateValue, setTodoDateValue] = useState(new Date());
 
   const addTodo = () => {
-    const newTodoArray = [...todoList];
-
-    newTodoArray.push({
+    const newData = {
       date: todoDateValue,
-      content: todoInputValue,
-      status: false,
-    });
+      action: todoInputValue,
+      isDone: false,
+    };
 
-    setTodoList(newTodoArray);
+    axios.post("http://localhost:2000/todos", newData).then(() => {
+      fetchTodoList();
+    });
   };
 
   const inputHandler = (event) => {
@@ -93,31 +60,43 @@ function App() {
     setTodoDateValue(value);
   };
 
-  const handleRemove = (idx) => {
-    const removeArray = [...todoList];
-
-    removeArray.splice(idx, 1);
-
-    setTodoList(removeArray);
+  const handleRemove = (id) => {
+    axios.delete(`http://localhost:2000/todos/${id}`).then(() => {
+      fetchTodoList();
+    });
   };
 
-  const handleEditStatus = (idx) => {
-    const newTodoArray = [...todoList];
+  const handleEditStatus = (id) => {
+    const dataToFind = todoList.find((val) => {
+      return val.id === id;
+    });
+    // axios.get(`http://localhost:2000/todos/${id}`).then((res) => {
+    //   const newIsDoneValue = !res.data.isDone;
+    //   axios
+    //     .patch(`http://localhost:2000/todos/${id}`, { isDone: newIsDoneValue })
+    //     .then(() => {
+    //       fetchTodoList();
+    //     });
+    // });
 
-    newTodoArray[idx].status = !newTodoArray[idx].status;
-
-    setTodoList(newTodoArray);
+    axios
+      .patch(`http://localhost:2000/todos/${id}`, {
+        isDone: !dataToFind.isDone,
+      })
+      .then(() => {
+        fetchTodoList();
+      });
   };
 
   const renderTodoList = () => {
-    return todoList.map((val, idx) => {
+    return todoList.map((val) => {
       return (
         <TodoItem
           date={val.date}
-          content={val.content}
-          status={val.status}
-          item={() => handleRemove(idx)}
-          edit={() => handleEditStatus(idx)}
+          content={val.action}
+          status={val.isDone}
+          item={() => handleRemove(val.id)}
+          edit={() => handleEditStatus(val.id)}
         />
       );
     });
@@ -136,8 +115,14 @@ function App() {
     });
   };
 
-  const changeUsername = () => {
-    setMyUsername("bill");
+  // const changeUsername = () => {
+  //   setMyUsername("bill");
+  // };
+
+  const fetchTodoList = () => {
+    axios.get("http://localhost:2000/todos").then((res) => {
+      setTodoList(res.data);
+    });
   };
 
   return (
@@ -153,6 +138,9 @@ function App() {
             <Button onClick={addTodo} color="success">
               Add Todo
             </Button>
+            <Button onClick={fetchTodoList} color="info">
+              Fetch Todo
+            </Button>
           </div>
         </div>
         <div className="row">
@@ -161,9 +149,6 @@ function App() {
             {renderTodoList()}
           </div>
         </div>
-
-        <h1>{myUsername}</h1>
-        <Button onClick={changeUsername}>Change Username</Button>
       </div>
     </>
   );
